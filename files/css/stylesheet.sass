@@ -1,5 +1,13 @@
+@import './grid.sass'
+    
 $PC: #5B8499
 $SC: #19242A
+
+@mixin shadow
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2)
+
+.disclaimer
+    @include shadow
 
 .logo 
     left: 50%
@@ -16,30 +24,28 @@ $SC: #19242A
     color: #fff
 
 nav 
+    @include shadow
+    
     height: 70px
     width: 100vw
     background: $PC
     
     display: block
     overflow-y: hidden
-    
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2)
-    
-.flex-box
-    display: flex
-    flex-flow: row wrap
-    justify-content: space-evenly
-    margin: 0 0 40px 0
 
-    .segment
-        min-height: 300px
-        min-width: 300px
-        max-width: 500px 
-        margin-top: 30px
-        padding: 0 20px
-        border: 1px dashed
+.segment
+    @include shadow
+    margin-top: 30px
+    min-height: 350px !important
+
+.wrapper
+    padding: 0 20px 10px 20px
+    
+    h1, h2, h3
+        text-align: left
 
 .center
+    margin-top: 50px
     display: grid
     place-items: center 
 
@@ -64,12 +70,41 @@ b
     color: $PC
 
 main
-    margin: 50px 50px 100px 50px
+    margin: 50px 0 100px 0px
 
     p
         @extend .clamp
-    
+ 
 h1, h2, h3
     text-align: center
 
+.btn,
+    border: none
+    border-radius: 4px
+    display: inline-block
+    height: 36px
+    line-height: 36px
+    padding: 0 16px
+    text-transform: uppercase
+    vertical-align: middle
+    -webkit-tap-highlight-color: transparent
+    outline: 0
+    text-decoration: none
+    text-align: center
+    transition: background-color .2s ease-out
+    cursor: pointer
+    color: #fff !important
+    font-size: 14px
+    font-weight:  400
 
+    margin-top: 20px
+
+    a
+        color: #fff !important
+
+.red
+    background-color: #F44336
+
+.green
+    background-color: #4caf50
+    

@@ -6,11 +6,15 @@ import { ConnectionHandler } from "./CSS-Fingerprint/index.ts";
 import { defaultFonts } from "./default-font-list.ts";
 
 const handler = new ConnectionHandler((fingerprint, ip, timestamp) => {
+    console.log(Array.from(fingerprint?.fonts.values() ?? []));
     // Get the correct fonts
     fingerprint?.calculateFonts(defaultFonts);
 
-    console.log("Time stamp: " + timestamp);
-    console.log(fingerprint);
+    // console.log(`New participant ${ip}. ${timestamp}`);
+
+    // console.log(fingerprint?.fonts);
+
+    // console.log(fingerprint?.fonts.values.length);
 });
 
 const cssRegex = pathToRegexp("/some/url/\\?:key=:value");
@@ -40,9 +44,9 @@ console.clear();
 console.log(`🚀 Server is running on http://localhost:${PORT}`);
 
 for await (const req of server) {
-    const connection = req.conn.remoteAddr as Deno.NetAddr;
-
     try {
+        const connection = req.conn.remoteAddr as Deno.NetAddr;
+
         // Handle the css requests first as they will be the greatest number of requests
         const match = cssRegex.exec(req.url);
         if (match) {
@@ -52,23 +56,32 @@ for await (const req of server) {
                 match[2],
                 req.headers
             );
-            req.respond({ status: 200 });
+            req.respond({ status: 418 });
         } else {
-            // Handle file requests and errors
-            if (req.url == "/") {
-                console.log("Connection from: " + connection.hostname);
-                serveFile(req, `./index.html`);
-            } else if (
-                !req.url.includes("..") &&
-                req.url.substr(0, 7) == "/files/" &&
-                existsSync(`./${req.url}`)
-            ) {
-                serveFile(req, `./${req.url}`);
-            } else
-                req.respond({
-                    body: "This content does not exist!",
-                    status: 404,
-                });
+            // Handle everything else
+            switch (req.url) {
+                case "/" || "/home" || "/index.html":
+                    // Home Page
+                    serveFile(req, `./index.html`);
+                    break;
+                case "/fingerprint":
+                    // Experiment Page
+                    serveFile(req, `./fingerprint.html`);
+                    break;
+                default:
+                    // Files and errors
+                    if (
+                        !req.url.includes("..") &&
+                        req.url.substr(0, 7) == "/files/" &&
+                        existsSync(`./${req.url}`)
+                    ) {
+                        serveFile(req, `./${req.url}`);
+                    } else
+                        req.respond({
+                            body: "Oops something went wrong! Err 404",
+                            status: 404,
+                        });
+            }
         }
     } catch (e) {
         console.log(e);
