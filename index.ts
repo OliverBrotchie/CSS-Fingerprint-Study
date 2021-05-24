@@ -6,15 +6,16 @@ import { ConnectionHandler } from "./CSS-Fingerprint/index.ts";
 import { defaultFonts } from "./default-font-list.ts";
 
 const handler = new ConnectionHandler((fingerprint, ip, timestamp) => {
-    console.log(Array.from(fingerprint?.fonts.values() ?? []));
     // Get the correct fonts
     fingerprint?.calculateFonts(defaultFonts);
 
-    // console.log(`New participant ${ip}. ${timestamp}`);
+    //console.log(`New participant ${ip}. ${timestamp}`);
 
-    // console.log(fingerprint?.fonts);
-
-    // console.log(fingerprint?.fonts.values.length);
+    console.log({
+        ip: ip,
+        timestamp: timestamp,
+        fingerprint: fingerprint?.toJSON(),
+    });
 });
 
 const cssRegex = pathToRegexp("/some/url/\\?:key=:value");
