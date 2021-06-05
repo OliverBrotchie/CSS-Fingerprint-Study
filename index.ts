@@ -4,13 +4,14 @@ import { startService } from "./server.ts";
 import { query } from "./db.ts";
 
 const handler = new ConnectionHandler((fingerprint, ip, timestamp) => {
-    fingerprint?.calculateFonts(defaultFonts);
+    if ([...(fingerprint?.properties.entries() ?? [])].length >= 4) {
+        fingerprint?.calculateFonts(defaultFonts);
 
-    console.log({
-        ip: ip,
-        timestamp: timestamp,
-        fingerprint: fingerprint?.toJSON(),
-    });
+        console.log(fingerprint);
+        const query = `INSERT INTO fingerprints (ip, timestamp, fingerprint)\nVALUES (${ip}, ${timestamp}, ${fingerprint?.toJSON()});`;
+
+        console.log(query);
+    }
 });
 
 // Create a vanilla web-server
