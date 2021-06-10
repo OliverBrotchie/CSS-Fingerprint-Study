@@ -1,0 +1,140 @@
+$mono: "mono/Vulf_Mono-"
+$sans: "sans/Vulf_Sans-"
+$url: "../fonts/"
+
+@font-face 
+    font-family: "Vulf Mono"
+    src: url($mono + "Light_web.woff") format("woff"), url($url + $mono + "Light_web.woff") format("woff")
+    font-weight: 300
+    font-style: normal
+
+
+@font-face 
+    font-family: "Vulf Mono"
+    src: url($mono + "Light_Italic_web.woff") format("woff"),url($url + $mono + "Light_Italic_web.woff") format("woff")
+    font-weight: 300
+    font-style: italic
+
+
+@font-face 
+    font-family: "Vulf Mono"
+    src: url($mono + "Regular_web.woff") format("woff"),url($url + $mono + "Regular_web.woff") format("woff")
+    font-weight: 400
+    font-style: normal
+
+
+@font-face 
+    font-family: "Vulf Mono"
+    src: url($mono + "Italic_web.woff") format("woff"),url($url + $mono + "Italic_web.woff") format("woff")
+    font-weight: 400
+    font-style: italic
+
+
+@font-face 
+    font-family: "Vulf Mono"
+    src: url($mono + "Bold_web.woff") format("woff"),url($url + $mono + "Bold_web.woff") format("woff")
+    font-weight: 700
+    font-style: normal
+
+
+@font-face 
+    font-family: "Vulf Mono"
+    src: url($mono + "Bold_Italic_web.woff") format("woff"),url($url + $mono + "Bold_Italic_web.woff") format("woff")
+    font-weight: 700
+    font-style: italic
+
+
+@font-face 
+    font-family: "Vulf Mono"
+    src: url($mono + "Black_web.woff") format("woff"),url($url + $mono + "Black_web.woff") format("woff")
+    font-weight: 900
+    font-style: normal
+
+
+@font-face 
+    font-family: "Vulf Mono"
+    src: url($mono + "Black_Italic_web.woff") format("woff"),url($url + $mono + "Black_Italic_web.woff") format("woff")
+    font-weight: 900
+    font-style: italic
+
+
+@font-face 
+    font-family: "Vulf Sans"
+    src: url($sans + "Light.woff") format("woff"),url($url + $sans + "Light.woff") format("woff")
+    font-weight: 300
+    font-style: normal
+
+
+@font-face 
+    font-family: "Vulf Sans"
+    src: url($sans + "Light_Italic.woff") format("woff"),url($url + $sans + "Light_Italic.woff") format("woff")
+    font-weight: 300
+    font-style: italic
+
+
+@font-face 
+    font-family: "Vulf Sans"
+    src: url($sans + "Medium.woff") format("woff"),url($url + $sans + "Medium.woff") format("woff")
+    font-weight: 400
+    font-style: normal
+
+
+@font-face 
+    font-family: "Vulf Sans"
+    src: url($sans + "Medium_Italic.woff") format("woff"),url($url + $sans + "Medium_Italic.woff") format("woff")
+    font-weight: 400
+    font-style: italic
+
+
+@font-face 
+    font-family: "Vulf Sans"
+    src: url($sans + "Bold.woff") format("woff"),url($url + $sans + "Bold.woff") format("woff")
+    font-weight: 700
+    font-style: normal
+
+
+@font-face 
+    font-family: "Vulf Sans"
+    src: url($sans + "Bold_Italic.woff") format("woff"),url($url + $sans + "Bold_Italic.woff") format("woff")
+    font-weight: 700
+    font-style: italic
+
+
+@font-face 
+    font-family: "Vulf Sans"
+    src: url($sans + "Black.woff") format("woff"),url($url + $sans + "Black.woff") format("woff")
+    font-weight: 900
+    font-style: normal
+
+
+@font-face 
+    font-family: "Vulf Sans"
+    src: url($sans + "Black_Italic.woff") format("woff"),url($url + $sans + "Black_Italic.woff") format("woff")
+    font-weight: 900
+    font-style: italic
+
+
+$fonts: ("mono": "Vulf Mono","sans": "Vulf Sans")
+$weights: ("light": 300,"bold": 700,"black": 900)
+
+@each $fontName, $font in $fonts 
+    .#{$fontName}
+        font-family: $font
+        font-weight: 400
+        &-italic 
+            @extend .#{$fontName}
+            font-style: italic
+        
+        @each $weightName, $weight in $weights 
+            &-#{$weightName}
+                @extend .#{$fontName}
+                font-family: $font
+                font-weight: $weight
+                &-italic 
+                    @extend .#{$fontName}-#{$weightName}
+                    font-style: italic
+                
+            
+        
+    
+
