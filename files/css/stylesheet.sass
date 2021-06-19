@@ -1,39 +1,73 @@
-@import './grid.sass'
 @import './fonts.sass'
-    
+@import './grid.sass'
+
 $PC: #5B8499
+$PC2:#327da3
+$PC-GRADIENT: linear-gradient($PC, $PC2)
 $SC: #19242A
 
 @mixin shadow
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2)
 
+@mixin gradient-text
+    background: #{$PC-GRADIENT}
+    background-clip: text
+    -webkit-background-clip: text
+    -moz-background-clip: text
+    -moz-text-fill-color: transparent
+    -webkit-text-fill-color: transparent
+
+@mixin clamp
+    max-width: clamp(45ch,50%,75ch)
+    text-align: left
+
 .disclaimer
     @include shadow
 
 .logo 
-    left: 50%
-    transform: translateX(-50%)
     text-decoration: none
     text-align: center
     
-    position: relative
-    display: inline-block
-    
     font-size: 2.0rem
     line-height: 70px
+    position: absolute
+    width: 100%
 
     color: #fff
 
-nav 
-    @include shadow
-    
-    height: 70px
-    width: 100vw
-    background: $PC
-    
-    display: block
-    overflow-y: hidden
+    top: 20%
 
+
+nav 
+    @include mono-italic
+    
+    height: 250px
+    width: 100vw
+    background: #{$PC-GRADIENT}
+    display: block
+    position: relative
+    margin: 0 0 50px 0
+
+    @media #{$medium-and-up}
+        margin: 0 0 100px 0
+
+    svg
+        position: absolute
+        bottom: 0
+        width: 100%
+        height: 100px
+        
+
+    @media #{$small-and-down}
+        .svg-l
+            display: none
+
+    @media #{$medium-and-up}
+        .svg-s
+            display: none
+    
+    
+    
 .segment
     @include shadow
     margin-top: 30px
@@ -44,15 +78,37 @@ nav
     
     h1, h2, h3
         text-align: left
+    
+    p 
+        @include clamp
 
 .center
-    margin-top: 50px
+    margin-bottom: 100px
     display: grid
     place-items: center 
+        
+    @media #{$medium-and-up}
+        border-left: 1px solid #e0e0e0
+        border-right: 1px solid #e0e0e0
 
-.clamp
-    max-width: clamp(45ch,50%,75ch)
-    text-align: left
+    a
+        color: $PC2
+    p
+        @include clamp
+        font-size: calc(0.8em + 0.4vw)
+
+    
+    img
+        width: 90vw
+        
+        @media #{$medium-and-up}
+            @include clamp
+
+.divider
+    height: 1px
+    overflow: hidden
+    background-color: #e0e0e0
+
 
 
 
@@ -60,22 +116,23 @@ html,body
     margin: 0
     background-color: #fff
     font-size: 16px
-    overflow-x:hidden
+    overflow-x: hidden
     max-width: 100vw !important
+    
+.gist
+    max-width: 85vw !important
+
+main
+    @include sans-light
+    margin: 50px 0 100px 0px
+    
+    
+h3 > a
+    color: $PC2
 
 a
     text-decoration: none
-    color: $PC
 
-b
-    color: $PC
-
-main
-    margin: 50px 0 100px 0px
-
-    p
-        @extend .clamp
- 
 h1, h2, h3
     text-align: center
 
@@ -96,16 +153,23 @@ h1, h2, h3
     cursor: pointer
     color: #fff !important
     font-size: 14px
-    font-weight:  400
+    
+    font-weight: 700
+
 
     margin-top: 20px
+
+    @include shadow
 
     a
         color: #fff !important
 
 .red
-    background-color: #F44336
+    background-color: #ce392f
+
 
 .green
-    background-color: #4caf50
-    
+    background-color: #7cb342
+
+.blue-text
+    color: $PC2 !important

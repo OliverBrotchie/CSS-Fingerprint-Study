@@ -1,36 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
-		<title>CSS Fingerprinting</title>
+		<title>CSS Fingerprint - Results</title>
 
-		<link type="text/css" rel="stylesheet" href="files/css/stylesheet.css"/>
-		<link async defer type="text/css" rel="stylesheet" href="files/css/example.css"/>
-		
+		<link type="text/css" rel="stylesheet" href="files/css/stylesheet.css">
+		<link type="text/css" rel="stylesheet" href="files/css/example.css">
+
 		<link rel="apple-touch-icon" sizes="180x180" href="files/favicon/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="files/favicon/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="files/favicon/favicon-16x16.png">
-		
+
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<meta name="description" content="CSS fingerprinting, no JS required!"/>
 		<meta name="authors" content="Oliver Brotchie" />
-		<meta name="keywords" content="CSS fingerprinting"/>
+		<meta name="keywords" content="CSS fingerprint"/>
 		<meta name="robots" content="index, follow"/>
-		
-		<!--Clear Cache-->
-		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-		<meta http-equiv="Pragma" content="no-cache" />
-		<meta http-equiv="Expires" content="0"/>
-		
+
 	</head>
-	<body class="sans-light">
+	<body>
 		<!-- top navigation bar -->
 		<nav>
-			<a href="/" class="logo mono-italic">CSS Fingerprint</a>
+			<a href="/" class="logo">CSS Fingerprint</a>
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+				<polygon class="svg-s" fill="white" points="0,0 20,80 50,21 80,80 100,0 100,100 0,100"></polygon>
+				<polygon class="svg-l" fill="white" points="0,0 15,100 33,21 45,100 50,75 55,100 72,20 85,100 100,0 200,80 100,100 0,100"></polygon>
+			</svg>
 		</nav>
 
 		<main>
-			<h2>Captured Infomation:</h2>
+			<h2>Captured Infomation</h2>
 			<div class="container">
 				<div class="row">
 					<div class="segment col s12 m5 l3">
@@ -107,14 +106,10 @@
 						</div>
 					</div>
 				</div>
-				<div class="center">
-					<h2>How this works</h2>
-					<p class="clamp">
-						This page detects specific features about a browser using CSS, exfiltrating this information by exploiting URL( ) tags. <br> <br>
-						Open dev tools. You will note the browser is making requests to URLs that correspond to infomation specific to your device.
-						For the purposes of this demo these requests will be returned as HTTP Error 418 (Im a teapot).<br><br><br>
-						
-						<b>Technique inspired by:</b><br> Takei, N., Saito, T., Takasu, K. and Yamada, T., 2015, November. Web browser fingerprinting using only cascading style sheets. In 2015 10th International Conference on Broadband and Wireless Computing, Communication and Applications (BWCCA) (pp. 57-63). IEEE. <br><br><br>
+				<div class="center" style="margin-top:100px">
+					<h2>Technique inspired by:</h2>
+					<p>
+						Takei, N., Saito, T., Takasu, K. and Yamada, T., 2015, November. Web browser fingerprinting using only cascading style sheets. In 2015 10th International Conference on Broadband and Wireless Computing, Communication and Applications (BWCCA) (pp. 57-63). IEEE. <br><br><br>
 						<h3><a href="https://github.com/OliverBrotchie/CSS-Fingerprint">See the Github page for more info!</a></h3>
 					</p>
 				</div>

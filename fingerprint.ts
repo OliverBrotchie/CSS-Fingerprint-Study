@@ -31,9 +31,9 @@ export class Fingerprint {
 
     toJSON(): string {
         return JSON.stringify({
-            properties: [...(this?.properties ?? [])],
-            fonts: [...(this?.fonts ?? [])],
-            headers: [...(this?.headers ?? [])],
+            properties: [...this.properties],
+            fonts: [...this.fonts],
+            headers: [...(this.headers ?? [])],
         });
     }
 }
@@ -46,7 +46,7 @@ export class Fingerprint {
  */
 export class DeviceRecord {
     timestamp: number;
-    customProperties: Map<any, any>;
+    customProperties: Map<unknown, unknown>;
     fingerprint: Fingerprint;
 
     /**
@@ -61,7 +61,7 @@ export class DeviceRecord {
 
     insert(
         key: string,
-        value: string | Array<any>,
+        value: string | Array<unknown>,
         headers?: Headers
     ): DeviceRecord {
         switch (key) {
@@ -70,13 +70,12 @@ export class DeviceRecord {
                 break;
             case "custom":
                 try {
-                    this.customProperties.set(value[0], [1]);
+                    this.customProperties.set(value[0], value[1]);
                 } catch (_e) {
                     throw new Error(
                         "Custom property values are input as an arrray: ['someKey','someValue']"
                     );
                 }
-
                 break;
             default:
                 this.fingerprint.properties.set(key, value as string);
@@ -104,11 +103,11 @@ export interface Callback {
  * @param {boolean|promise<boolean>} timeoutFunction: a function that checks for a certain condition.
  * If it is true, the device record will be passed onto the callback function, if it is false, it will wait the amount
  * of time spesified by timeout.
- * @param {number} timeout: the interval running the timeout function
+ * @param {number} timeout: the interval running the timeout function. Set to false if you do not wish for a timeout (this is not recommended)
  */
 export interface Options {
-    timeoutFunction: (record: DeviceRecord) => boolean | Promise<boolean>;
-    timeout?: number;
+    timeoutFunction?: (record: DeviceRecord) => boolean | Promise<boolean>;
+    timeout?: number | boolean;
 }
 
 /**
@@ -146,7 +145,7 @@ export class ConnectionHandler {
      *
      * @param {string} ip: the ip of the conenction.
      * @param {string} key: the property to be set. Use "custom" to set a custom property in the DeviceRecord
-     * @param {string|Array<any>} value: the value to be set.
+     * @param {string|Array<unknown>} value: the value to be set.
      * When using a custom property, replace value with an array of signature: [key,value]
      * @param {number} time: (optional) the epoch time of the request.
      * @param {Headers} headers: (optional) the HTTP headers of the request.
@@ -154,7 +153,7 @@ export class ConnectionHandler {
     insert(
         ip: string,
         key: string,
-        value: string | Array<any>,
+        value: string | Array<unknown>,
         headers?: Headers
     ): void {
         const record = this.data.get(ip);
@@ -163,27 +162,41 @@ export class ConnectionHandler {
         if (!record) {
             // Create a new record of this device
             this.data.set(ip, new DeviceRecord().insert(key, value, headers));
-
-            // Complex async timeout testing
-            new Promise((resolve) => {
-                // Call timeoutFunction every spesified timeout
-                const inter = setInterval(async () => {
-                    if (
-                        (await this.options.timeoutFunction(
-                            this.data.get(ip) as DeviceRecord
-                        )) == true
-                    ) {
-                        clearInterval(inter);
-                        resolve(undefined);
-                    }
-                }, this.options.timeout);
-            }).then(() => {
-                this.callback(ip, this.data.get(ip) as DeviceRecord);
-                this.data.delete(ip);
-            });
+            // Timeout
+            if (!(typeof this.options.timeout == "boolean"))
+                new Promise((resolve) => {
+                    // Call timeoutFunction every spesified timeout
+                    const inter = setInterval(async () => {
+                        if (
+                            await (
+                                this.options.timeoutFunction as (
+                                    record: DeviceRecord
+                                ) => boolean | Promise<boolean>
+                            )(this.data.get(ip) as DeviceRecord)
+                        ) {
+                            clearInterval(inter);
+                            resolve(undefined);
+                        }
+                    }, this.options.timeout as number);
+                }).then(() => {
+                    this.flush(ip);
+                });
         } else {
             record.insert(key, value, headers);
         }
+    }
+
+    /**
+     * If IP exists, remove the record from storage and it pass onto the callback function.
+     *
+     * @param {string} ip: the ip of the record.
+     */
+    flush(ip: string): boolean {
+        if (this.data.has(ip)) {
+            this.callback(ip, this.data.get(ip) as DeviceRecord);
+            this.data.delete(ip);
+            return true;
+        } else return false;
     }
 }
 

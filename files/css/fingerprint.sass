@@ -488,7 +488,7 @@ $os: '#{$base-url}os=' !default
             @else
                 @include hide   
 
-    @supports (-moz-device-pixel-ratio: 1)
+    @supports (--moz-device-pixel-ratio: 1)
         &::after
             background-image: url('#{$family}firefox')
             @if $print
