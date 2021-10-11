@@ -22,10 +22,13 @@ export async function startService(port: number, handler: ConnectionHandler) {
                 match = redirectRegex.exec(req.url);
                 if (match) {
                     req.respond({ status: 418 });
-                    handler.insert(
+                    handler.insertCustom(
                         `${(req.conn.remoteAddr as Deno.NetAddr).hostname}`,
-                        "custom",
-                        ["subsequent-redirect", match[1]],
+                        "subsequent-redirect",
+                        match[1]
+                    );
+                    handler.addHeader(
+                        `${(req.conn.remoteAddr as Deno.NetAddr).hostname}`,
                         req.headers
                     );
                 } else if (req.url == "/some/url/308") {
@@ -37,10 +40,10 @@ export async function startService(port: number, handler: ConnectionHandler) {
                             location: "/some/url/308=" + rnd,
                         }),
                     });
-                    handler.insert(
+                    handler.insertCustom(
                         `${(req.conn.remoteAddr as Deno.NetAddr).hostname}`,
-                        "custom",
-                        ["original-redirect", rnd]
+                        "redirect",
+                        rnd
                     );
                 } else req.respond({ status: 400 });
             }

@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 /**
  * Fingerprinted infomation template.
  *
@@ -59,29 +60,10 @@ export class DeviceRecord {
         this.customProperties = new Map();
     }
 
-    insert(
-        key: string,
-        value: string | Array<unknown>,
-        headers?: Headers
-    ): DeviceRecord {
-        switch (key) {
-            case "font-name":
-                this.fingerprint.fonts.add(value as string);
-                break;
-            case "custom":
-                try {
-                    this.customProperties.set(value[0], value[1]);
-                } catch (_e) {
-                    throw new Error(
-                        "Custom property values are input as an arrray: ['someKey','someValue']"
-                    );
-                }
-                break;
-            default:
-                this.fingerprint.properties.set(key, value as string);
-        }
-        if (headers) this.fingerprint.headers = headers;
-
+    insert(key: string, value: string): DeviceRecord {
+        key == "font-name"
+            ? this.fingerprint.fonts.add(value)
+            : this.fingerprint.properties.set(key, value);
         return this;
     }
 }
@@ -150,18 +132,21 @@ export class ConnectionHandler {
      * @param {number} time: (optional) the epoch time of the request.
      * @param {Headers} headers: (optional) the HTTP headers of the request.
      */
-    insert(
+
+    private add(
+        fn: (...args: any[]) => void,
         ip: string,
-        key: string,
-        value: string | Array<unknown>,
-        headers?: Headers
+        ...args: any[]
     ): void {
         const record = this.data.get(ip);
 
         // if the record does not exist
         if (!record) {
             // Create a new record of this device
-            this.data.set(ip, new DeviceRecord().insert(key, value, headers));
+            this.data.set(ip, new DeviceRecord());
+            // Run insert function
+            fn(...args);
+
             // Timeout
             if (!(typeof this.options.timeout == "boolean"))
                 new Promise((resolve) => {
@@ -182,8 +167,44 @@ export class ConnectionHandler {
                     this.flush(ip);
                 });
         } else {
-            record.insert(key, value, headers);
+            fn(...args);
         }
+    }
+
+    addHeader(ip: string, headers: Headers): void {
+        this.add(
+            (headers: Headers) => {
+                (this.data.get(ip) as DeviceRecord).fingerprint.headers =
+                    headers;
+            },
+            ip,
+            headers
+        );
+    }
+
+    insert(ip: string, key: string, value: string): void {
+        this.add(
+            (key, value) => {
+                (this.data.get(ip) as DeviceRecord).insert(key, value);
+            },
+            ip,
+            key,
+            value
+        );
+    }
+
+    insertCustom(ip: string, key: string, value: string): void {
+        this.add(
+            (key, value) => {
+                (this.data.get(ip) as DeviceRecord).customProperties.set(
+                    key,
+                    value
+                );
+            },
+            ip,
+            key,
+            value
+        );
     }
 
     /**
