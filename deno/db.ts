@@ -1,7 +1,7 @@
 import { config } from "https://deno.land/x/dotenv/mod.ts";
 import { Pool } from "https://deno.land/x/postgres/mod.ts";
 
-const env = config();
+const env = config({path:"../.env"});
 
 /**
  * The authentication object to connect to the postgreSQL database.

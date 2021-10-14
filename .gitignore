@@ -3,3 +3,7 @@
 *.DS_Store
 fonts.ts
 .env
+
+# Added by cargo
+
+/target
