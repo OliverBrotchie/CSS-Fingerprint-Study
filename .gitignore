@@ -2,8 +2,8 @@
 *.css.map
 *.DS_Store
 fonts.ts
-.env
 
 # Added by cargo
 
 /target
+*.env

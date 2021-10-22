@@ -73,7 +73,11 @@ async fn export_data(ip: &str, fingerprint: Fingerprint) {
 
     match tokio_postgres::connect(&URL, NoTls).await {
         Ok((client, connection)) => {
-            connection.await.unwrap();
+            tokio::spawn(async move {
+                if let Err(e) = connection.await {
+                    eprintln!("connection error: {}", e);
+                }
+            });
             client
                 .execute(
                     "INSERT INTO fingerprints (ip, fingerprint) VALUES ($1,$2);",
