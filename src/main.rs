@@ -2,7 +2,10 @@
 extern crate dotenv_codegen;
 use actix_web::{get, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use serde::Serialize;
-use std::{collections::HashMap, sync::Mutex};
+use std::{
+    collections::HashMap,
+    sync::{Arc, Mutex},
+};
 use tokio::time::{sleep, Duration};
 use tokio_postgres::NoTls;
 
@@ -24,14 +27,35 @@ impl Fingerprint {
     }
 }
 
+#[derive(Clone)]
+struct Fingerprints {
+    data: Arc<Mutex<HashMap<String, Fingerprint>>>,
+}
+
+impl Fingerprints {
+    // This is not async!
+    pub fn take_by_ip(&self, ip: &str) -> Option<Fingerprint> {
+        self.data.lock().unwrap().remove(ip)
+    }
+
+    pub fn with_lock<F, T>(&self, func: F) -> T
+    where
+        F: FnOnce(&mut HashMap<String, Fingerprint>) -> T,
+    {
+        let mut lock = self.data.lock().unwrap();
+        func(&mut *lock)
+    }
+}
+
 const URL: &str = dotenv!("DATABASE_URL");
 const PORT: u16 = 8000;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     println!("🚀 Server running on port: {}!", PORT);
-
-    let data = web::Data::new(Mutex::new(HashMap::<String, Fingerprint>::new()));
+    let data = web::Data::new(Fingerprints {
+        data: Arc::new(Mutex::new(HashMap::new())),
+    });
 
     HttpServer::new(move || {
         App::new()
@@ -45,10 +69,9 @@ async fn main() -> std::io::Result<()> {
 }
 
 async fn export_data(ip: &str, fingerprint: Fingerprint) {
-    // Do Something
     println!("ip: {}, fingerprint: {:#?}", ip, fingerprint.properties);
 
-    match tokio_postgres::connect(URL, NoTls).await {
+    match tokio_postgres::connect(&URL, NoTls).await {
         Ok((client, connection)) => {
             connection.await.unwrap();
             client
@@ -68,7 +91,7 @@ async fn export_data(ip: &str, fingerprint: Fingerprint) {
 // Handle Standard Properties
 #[get("/some/url/{key}={value}")]
 async fn new_prop(
-    data: web::Data<Mutex<HashMap<String, Fingerprint>>>,
+    fingerprints: web::Data<Fingerprints>,
     request: HttpRequest,
     pair: web::Path<(String, String)>,
 ) -> impl Responder {
@@ -80,19 +103,18 @@ async fn new_prop(
         HttpResponse::Gone()
     };
 
-    // Obtain lock on data
-    let mut map = data.lock().unwrap();
-    let con_info = request.connection_info();
-    let ip = con_info
+    let fingerprints = fingerprints.into_inner();
+    let ip: String = (*request
+        .connection_info()
         .realip_remote_addr()
         .unwrap()
         .split(':')
         .next()
-        .unwrap();
+        .unwrap())
+    .to_string();
 
     // Create new Fingerprint or add prop to existing
-    match map.get_mut(ip) {
-        Some(f) => f.insert(pair.into_inner()),
+    if fingerprints.with_lock(|map| match map.get_mut(&ip) {
         None => {
             let mut f = Fingerprint {
                 properties: Vec::new(),
@@ -111,15 +133,19 @@ async fn new_prop(
             };
             f.insert(pair.into_inner());
             map.insert(ip.to_owned(), f);
-
-            // Release lock on data
-            drop(map);
-
-            // Wait x seconds before obtaining a lock on the data and then export to DB
-            sleep(Duration::from_millis(10000)).await;
-            export_data(ip, data.lock().unwrap().remove(ip).unwrap()).await;
+            true
         }
-    }
+        Some(f) => {
+            f.insert(pair.into_inner());
+            false
+        }
+    }) {
+        // Wait 10 seconds before exporting to DB
+        tokio::spawn(async move {
+            sleep(Duration::from_millis(10000)).await;
+            export_data(&ip, fingerprints.take_by_ip(&ip).unwrap()).await;
+        });
+    };
 
     response
 }
