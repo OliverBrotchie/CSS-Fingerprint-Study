@@ -81,7 +81,7 @@ async fn export_data(ip: &str, fingerprint: Fingerprint) {
             client
                 .execute(
                     "INSERT INTO fingerprints (ip, fingerprint) VALUES ($1,$2);",
-                    &[&ip, &serde_json::to_string(&fingerprint).unwrap().as_str()],
+                    &[&ip, &serde_json::to_value(fingerprint).unwrap()],
                 )
                 .await
                 .unwrap();
