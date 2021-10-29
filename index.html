@@ -34,7 +34,7 @@
 					<h2>What is it?</h2>
 					<p>CSS Fingerprinting is a technique of tracking and gathering information on site visitors. This method exploits the nature of CSS to track various characteristics about the visitor's browser and device, which can later be used to either identify or track said visitor.</p>
 					<h2>How does it work?</h2>
-					<p>By sending a variety of media queries that apply to specific browser characteristics, the browser will select a set of styles that apply to itself. We then trick the browser into sending this information back to the server by setting the background-image of these styles to a spesific url.</p>
+					<p>By sending a variety of media queries that apply to specific browser characteristics, the browser will select a set of styles that apply to itself. We then trick the browser into sending this information back to the server by setting the background-image of these styles to a spesific url. The server will then respond with HTTP Status 410 (Gone) to avoid any requests of these charecteristics on subsequent reloads.</p>
 					<p>For example, to detect the type of pointer input:</p>
 					<script src="https://gist.github.com/OliverBrotchie/9283af47058cc085bb02370dcf30685c.js"></script>
 					<noscript><a href="https://gist.github.com/OliverBrotchie/9283af47058cc085bb02370dcf30685c">https://gist.github.com/OliverBrotchie/9283af47058cc085bb02370dcf30685c</a></noscript>
