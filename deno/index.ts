@@ -9,11 +9,12 @@ const handler = new ConnectionHandler((ip, record) => {
     if ([...record.fingerprint.properties.entries()].length >= 10) {
         record.fingerprint.calculateFonts(defaultFonts);
 
-        console.log(
-            query(`INSERT INTO fingerprints (ip, timestamp, fingerprint)\nVALUES (${ip}, ${
-                record.timestamp
-            }, ${record.fingerprint.toJSON()});`)
-        );
+        
+        // console.log(
+        //     query(`INSERT INTO fingerprints (ip, timestamp, fingerprint)\nVALUES (${ip}, ${
+        //         record.timestamp
+        //     }, ${record.fingerprint.toJSON()});`)
+        // );
     }
 });
 
