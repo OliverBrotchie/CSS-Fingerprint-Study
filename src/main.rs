@@ -33,7 +33,6 @@ struct Fingerprints {
 }
 
 impl Fingerprints {
-    // This is not async!
     pub fn take_by_ip(&self, ip: &str) -> Option<Fingerprint> {
         self.data.lock().unwrap().remove(ip)
     }
