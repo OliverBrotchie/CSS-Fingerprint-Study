@@ -34,22 +34,22 @@
 					<h2>What is it?</h2>
 					<p>CSS Fingerprinting is a technique of tracking and gathering information on site visitors. This method exploits the nature of CSS to track various characteristics about the visitor's browser and device, which can later be used to either identify or track said visitor.</p>
 					<h2>How does it work?</h2>
-					<p>By sending a variety of media queries that apply to specific browser characteristics, the browser will select a set of styles that apply to itself. We then trick the browser into sending this information back to the server by setting the background-image of these styles to a spesific url. The server will then respond with HTTP Status 410 (Gone) to avoid any requests of these charecteristics on subsequent reloads.</p>
+					<p>By sending a variety of media queries that apply to specific browser characteristics, the browser will select a set of styles that apply to itself. We then trick the browser into sending this information back to the server by setting the background-image of these styles to a specific URL. The server will then respond with HTTP Status 410 (Gone) to avoid any requests of these characteristics on subsequent reloads.</p>
 					<p>For example, to detect the type of pointer input:</p>
 					<script src="https://gist.github.com/OliverBrotchie/9283af47058cc085bb02370dcf30685c.js"></script>
 					<noscript><a href="https://gist.github.com/OliverBrotchie/9283af47058cc085bb02370dcf30685c">https://gist.github.com/OliverBrotchie/9283af47058cc085bb02370dcf30685c</a></noscript>
 					<p>Installed fonts can also be detected in a similar manner:</p>
 					<script src="https://gist.github.com/OliverBrotchie/fd65cf6fe21894e0cb188cf619a94c02.js"></script>
 					<noscript><a href="https://gist.github.com/OliverBrotchie/fd65cf6fe21894e0cb188cf619a94c02">https://gist.github.com/OliverBrotchie/fd65cf6fe21894e0cb188cf619a94c02</a></noscript>
-					<p>However, this works a little differently; every font not installed on device will send a request. By comparing differences between the requests and the full list of fonts, we can draw conclusions about what fonts are installed.</p>
+					<p>However, this works a little differently; every font not installed on device will send a request. By comparing the differences between the requests and the full list of fonts, we can draw conclusions about what fonts are installed.</p>
 					<p>We can also track visitors cross-origin by making a request to an endpoint on the server that will return a permanent redirect (HTTP status 308) to a unique address. The browser will then permanently make requests to the previously generated unique address whenever the endpoint is requested.</p><br><br>
 					<img src="files/img/diagram.png" alt="Diagram of 308 redirect"><br>
 					<h2>Why is this important?</h2>
-					<p>This technique avoids anti-tracking methods such as noScript, VPNs or browser extensions, as it requires no Javascript or Cookies to function.</p>
-					<p>Currently, this method is not scalable as it requires over 1MB of CSS downloads and hundreds of requests per user. However, with the next upcoming draft of the CSS specification, <a href="https://www.w3.org/TR/css-values-4/">CSS Values 4</a>, it may dramatically shrink the number of requests per user by allowing the use of custom variables in urls.</p>
+					<p>This technique avoids anti-tracking methods such as NoScript, VPNs or browser extensions, as it requires no Javascript or Cookies to function.</p>
+					<p>Currently, this method is not scalable as it requires over 1MB of CSS downloads and hundreds of requests per user. However, with the next upcoming draft of the CSS specification, <a href="https://www.w3.org/TR/css-values-4/">CSS Values 4</a>, it may dramatically shrink the number of requests per user by allowing the use of custom variables in URLs.</p>
 					<script src="https://gist.github.com/OliverBrotchie/b4a5fdb75ed560b0652275be90750f79.js"></script>
 					<noscript><a href="https://gist.github.com/OliverBrotchie/b4a5fdb75ed560b0652275be90750f79">https://gist.github.com/OliverBrotchie/b4a5fdb75ed560b0652275be90750f79</a></noscript>
-					<p>Not only will the upcoming draft make this method scalable, but it will also increase its precision. Currently, without alternative means, it is hard to conclusively link every request to a specific visitor as the only feasible way to determine their origin, is to group the requests by the IP address of the connection. However, with the new draft, by generating a randomised string and interpolating it into the URL tag for every visitor, we can accuratly identify all requests from said visitor.</p>
+					<p>Not only will the upcoming draft make this method scalable, but it will also increase its precision. Currently, without alternative means, it is hard to conclusively link every request to a specific visitor as the only feasible way to determine their origin, is to group the requests by the IP address of the connection. However, with the new draft, by generating a randomised string and interpolating it into the URL tag for every visitor, we can accurately identify all requests from said visitor.</p>
 					<br><br><h3 class="blue-text">See demo by clicking 'I Agree' below.</h3>
 				</div>
 			</div>
