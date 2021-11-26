@@ -1,6 +1,6 @@
 # CSS Fingerprint Study
 
-This is the live code that is running on the backend. Please the disclaimer on index page!
+This is the live code that is running on the backend. Please read the disclaimer on index page!
 
 ### **Links**
 
